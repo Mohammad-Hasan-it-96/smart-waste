@@ -1,0 +1,2 @@
+# smart-waste
+flutter Application
