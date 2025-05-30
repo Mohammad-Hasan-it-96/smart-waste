@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_waste/env.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
@@ -207,8 +208,8 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
       MaterialPageRoute(
         builder:
             (context) => DGisLocationPicker(
-              initialLat: lat,
-              initialLng: lng,
+              initialLat: lat ?? 55.7558,
+              initialLng: lng ?? 37.6173,
               onPicked: (pickedLat, pickedLng) {
                 setState(() {
                   lat = pickedLat;
@@ -218,6 +219,65 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
             ),
       ),
     );
+  }
+
+  Future<void> _useCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        final shouldOpen = await showDialog<bool>(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: Text('Включить геолокацию?'),
+                content: Text(
+                  'Для использования этой функции включите геолокацию на устройстве.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text('Отмена'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text('Открыть настройки'),
+                  ),
+                ],
+              ),
+        );
+        if (shouldOpen == true) {
+          await Geolocator.openLocationSettings();
+        }
+        return;
+      }
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Нет разрешения на геолокацию.')),
+          );
+          return;
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Геолокация запрещена навсегда.')),
+        );
+        return;
+      }
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      setState(() {
+        lat = position.latitude;
+        lng = position.longitude;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка получения геолокации: $e')),
+      );
+    }
   }
 
   Future<void> _pickTime(BuildContext context, String day, String field) async {
@@ -945,6 +1005,12 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                             'Координаты: ${lat!.toStringAsFixed(6)}, ${lng!.toStringAsFixed(6)}',
                           ),
                         ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: _useCurrentLocation,
+                        icon: Icon(Icons.my_location),
+                        label: Text('Использовать моё местоположение'),
+                      ),
                       const SizedBox(height: 16),
                       TextFormField(
                         decoration: const InputDecoration(
