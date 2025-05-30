@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -6,19 +9,35 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+// Function to read properties from local.properties or a dedicated keystore.properties
+fun getKeystoreProperties(project: Project): Properties {
+    val keystoreProps = Properties()
+    // Try local.properties first, then a dedicated keystore.properties
+    var keystoreFile = project.rootProject.file("local.properties")
+    if (!keystoreFile.exists()) {
+        keystoreFile = project.file("keystore.properties") // Assumes keystore.properties is in android/app/
+    }
+    if (keystoreFile.exists()) {
+        keystoreProps.load(FileInputStream(keystoreFile))
+    }
+    return keystoreProps
+}
+
+val keystoreProperties = getKeystoreProperties(project)
+
 android {
     namespace = "com.mohamad.hasan.it.smart_waste"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -26,9 +45,11 @@ android {
         applicationId = "com.mohamad.hasan.it.smart_waste"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+        multiDexEnabled = true
     }
     dependencies {
         // Import the Firebase BoM
@@ -38,6 +59,7 @@ android {
         // When using the BoM, don't specify versions in Firebase dependencies
         implementation("com.google.firebase:firebase-analytics")
         implementation("com.google.firebase:firebase-messaging")
+        implementation("androidx.multidex:multidex:2.0.1")
 
         // Add the dependencies for any other desired Firebase products
         // https://firebase.google.com/docs/android/setup#available-libraries
@@ -45,19 +67,27 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile = file("my-release-key.jks")
-            storePassword = "123456"
-            keyAlias = "upload"
-            keyPassword = "123456"
+            val storeFileProperty = keystoreProperties.getProperty("MYAPP_RELEASE_STORE_FILE")
+            val storePasswordProperty = keystoreProperties.getProperty("MYAPP_RELEASE_STORE_PASSWORD")
+            val keyAliasProperty = keystoreProperties.getProperty("MYAPP_RELEASE_KEY_ALIAS")
+            val keyPasswordProperty = keystoreProperties.getProperty("MYAPP_RELEASE_KEY_PASSWORD")
+
+            if (storeFileProperty != null && storePasswordProperty != null && keyAliasProperty != null && keyPasswordProperty != null) {
+                storeFile = project.file(storeFileProperty) // Ensure this path is correct relative to the project root or app module
+                storePassword = storePasswordProperty
+                keyAlias = keyAliasProperty
+                keyPassword = keyPasswordProperty
+            } else {
+                println("Warning: Release signing keystore properties not found in local.properties or keystore.properties. The release build may not be signed correctly or might use a default debug key if available.")
+                // Fallback to debug if properties are missing, or handle as an error
+            }
         }
     }
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now,
-            // so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
             signingConfig = signingConfigs.getByName("release")
+            // You can add other release-specific configurations here, like ProGuard rules
+            // proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }

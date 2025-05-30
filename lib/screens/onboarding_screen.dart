@@ -14,19 +14,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _slides = [
     {
-      'image': 'assets/onboarding1.png', // Replace with your asset paths
-      'title': 'Welcome to Smart Waste',
-      'desc': 'Manage your waste collection efficiently',
+      'image': 'assets/onboarding1.png',
+      'title': 'Добро пожаловать в EcoPack',
+      'desc': 'Эффективное управление вывозом отходов',
     },
     {
       'image': 'assets/onboarding2.png',
-      'title': 'Track Collection Days',
-      'desc': 'View your waste pickup schedule at a glance',
+      'title': 'Отслеживайте график вывоза',
+      'desc': 'Просматривайте расписание вывоза отходов',
     },
     {
       'image': 'assets/onboarding3.png',
-      'title': 'Set Your Location',
-      'desc': 'Enable location services to get started',
+      'title': 'Укажите ваше местоположение',
+      'desc': 'Включите службы геолокации для начала работы',
     },
   ];
 
@@ -49,7 +49,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Replace with Image.asset(slide['image']!)
                         Icon(
                           Icons.eco,
                           size: 64,
@@ -100,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _currentPage == _slides.length - 1
                       ? ElevatedButton(
                         onPressed: widget.onFinish,
-                        child: const Text('Get Started'),
+                        child: const Text('Начать'),
                       )
                       : TextButton(
                         onPressed: () {
@@ -109,7 +108,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             curve: Curves.easeInOut,
                           );
                         },
-                        child: const Text('Next'),
+                        child: const Text('Далее'),
                       ),
             ),
           ],

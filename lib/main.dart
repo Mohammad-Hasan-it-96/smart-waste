@@ -93,18 +93,18 @@ void main() async {
       valueListenable: themeNotifier,
       builder: (context, mode, _) {
         return MaterialApp(
-          title: 'умные отходы',
+          title: 'EcoPack',
           theme: ThemeData(
             brightness: Brightness.light,
-            primaryColor: const Color(0xFF388E3C), // Eco green
+            primaryColor: const Color(0xFFFF9800), // Orange
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF388E3C),
+              seedColor: const Color(0xFFFF9800),
               brightness: Brightness.light,
             ),
             scaffoldBackgroundColor: const Color(0xFFF1F8E9),
             textTheme: const TextTheme(
               headlineLarge: TextStyle(
-                color: Color(0xFF388E3C),
+                color: Color(0xFFFF9800),
                 fontWeight: FontWeight.bold,
                 fontSize: 32,
               ),
@@ -112,15 +112,15 @@ void main() async {
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
-            primaryColor: const Color(0xFF66BB6A),
+            primaryColor: const Color(0xFFFF9800),
             colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF66BB6A),
+              seedColor: const Color(0xFFFF9800),
               brightness: Brightness.dark,
             ),
             scaffoldBackgroundColor: const Color(0xFF263238),
             textTheme: const TextTheme(
               headlineLarge: TextStyle(
-                color: Color(0xFF66BB6A),
+                color: Color(0xFFFF9800),
                 fontWeight: FontWeight.bold,
                 fontSize: 32,
               ),
@@ -151,18 +151,18 @@ class SmartWasteApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'умные отходы',
+      title: 'EcoPack',
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: const Color(0xFF388E3C), // Eco green
+        primaryColor: const Color(0xFFFF9800), // Orange
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF388E3C),
+          seedColor: const Color(0xFFFF9800),
           brightness: Brightness.light,
         ),
         scaffoldBackgroundColor: const Color(0xFFF1F8E9),
         textTheme: const TextTheme(
           headlineLarge: TextStyle(
-            color: Color(0xFF388E3C),
+            color: Color(0xFFFF9800),
             fontWeight: FontWeight.bold,
             fontSize: 32,
           ),
@@ -170,15 +170,15 @@ class SmartWasteApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        primaryColor: const Color(0xFF66BB6A),
+        primaryColor: const Color(0xFFFF9800),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF66BB6A),
+          seedColor: const Color(0xFFFF9800),
           brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: const Color(0xFF263238),
         textTheme: const TextTheme(
           headlineLarge: TextStyle(
-            color: Color(0xFF66BB6A),
+            color: Color(0xFFFF9800),
             fontWeight: FontWeight.bold,
             fontSize: 32,
           ),

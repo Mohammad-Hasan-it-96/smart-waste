@@ -68,13 +68,13 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'умные отходы',
+              'EcoPack',
               style: theme.textTheme.headlineLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Text(
-              'Smart Waste',
+              'Экологичное будущее',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.secondary,
               ),

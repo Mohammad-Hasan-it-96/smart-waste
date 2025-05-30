@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:smart_waste/screens/home_screen.dart' as home;
 import 'package:smart_waste/screens/login_screen.dart' as login;
 import 'package:smart_waste/main.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -21,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureRepeatPassword = true;
+  final _storage = const FlutterSecureStorage();
 
   void _register() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -42,6 +45,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _isLoading = false);
 
         if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = jsonDecode(response.body);
+          // Store the authentication token
+          if (data['token'] != null) {
+            await _storage.write(key: 'auth_token', value: data['token']);
+          }
+
           // Registration successful, navigate to home
           if (!mounted) return;
           Navigator.of(context).pushReplacement(
@@ -75,42 +84,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Регистрация'),
-          centerTitle: true,
-      actions: [
-        ValueListenableBuilder<ThemeMode>(
-          valueListenable: themeNotifier,
-          builder: (context, mode, _) {
-            IconData icon;
-            switch (mode) {
-              case ThemeMode.dark:
-                icon = Icons.dark_mode;
-                break;
-              case ThemeMode.light:
-                icon = Icons.light_mode;
-                break;
-              default:
-                icon = Icons.brightness_auto;
-            }
-            return IconButton(
-              icon: Icon(icon),
-              tooltip: 'Change theme',
-              onPressed: () {
-                ThemeMode newMode;
-                if (mode == ThemeMode.system) {
-                  newMode = ThemeMode.light;
-                } else if (mode == ThemeMode.light) {
-                  newMode = ThemeMode.dark;
-                } else {
-                  newMode = ThemeMode.system;
-                }
-                themeNotifier.value = newMode;
-              },
-            );
-          },
-        ),
-
-      ],),
+      appBar: AppBar(
+        title: const Text('Регистрация'),
+        centerTitle: true,
+        actions: [
+          ValueListenableBuilder<ThemeMode>(
+            valueListenable: themeNotifier,
+            builder: (context, mode, _) {
+              IconData icon;
+              switch (mode) {
+                case ThemeMode.dark:
+                  icon = Icons.dark_mode;
+                  break;
+                case ThemeMode.light:
+                  icon = Icons.light_mode;
+                  break;
+                default:
+                  icon = Icons.brightness_auto;
+              }
+              return IconButton(
+                icon: Icon(icon),
+                tooltip: 'Change theme',
+                onPressed: () {
+                  ThemeMode newMode;
+                  if (mode == ThemeMode.system) {
+                    newMode = ThemeMode.light;
+                  } else if (mode == ThemeMode.light) {
+                    newMode = ThemeMode.dark;
+                  } else {
+                    newMode = ThemeMode.system;
+                  }
+                  themeNotifier.value = newMode;
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
