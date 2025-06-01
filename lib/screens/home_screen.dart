@@ -240,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   List<String> _promotionImages = [];
   String? _workingHours;
+  String? _customerServicePhone;
 
   @override
   void initState() {
@@ -325,6 +326,13 @@ class _HomeScreenState extends State<HomeScreen>
           );
         }
 
+        final customerServicePhone = configList.firstWhere(
+          (c) => c['name'] == 'customer service phone number',
+          orElse: () => null,
+        );
+        if (customerServicePhone != null) {
+          _customerServicePhone = customerServicePhone['value'];
+        }
         // Locations
         _userAddresses = List<Map<String, dynamic>>.from(
           data['locations'] ?? [],
@@ -340,6 +348,7 @@ class _HomeScreenState extends State<HomeScreen>
           // Add these:
           _promotionImages = _promotionImages;
           _workingHours = _workingHours;
+          _customerServicePhone = _customerServicePhone;
           _userAddresses = _userAddresses;
         });
       } else {
@@ -686,7 +695,9 @@ class _HomeScreenState extends State<HomeScreen>
             padding: const EdgeInsets.all(16),
             child: TextButton.icon(
               onPressed: () async {
-                final url = 'https://t.me/+963983820430';
+                final phone = (_customerServicePhone ?? '+963997240528')
+                    .replaceAll('+', '');
+                final url = 'https://t.me/$phone';
                 try {
                   await launchUrl(Uri.parse(url));
                 } catch (e) {
