@@ -9,6 +9,16 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+// Read versionCode and versionName from local.properties
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+val flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
+val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0"
+
 // Function to read properties from local.properties or a dedicated keystore.properties
 fun getKeystoreProperties(project: Project): Properties {
     val keystoreProps = Properties()
@@ -28,7 +38,7 @@ val keystoreProperties = getKeystoreProperties(project)
 android {
     namespace = "com.mohamad.hasan.it.smart_waste"
     compileSdk = 35
-    ndkVersion = "27.0.12077973"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -45,10 +55,10 @@ android {
         applicationId = "com.mohamad.hasan.it.smart_waste"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 24
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutterVersionCode.toInt()
+        versionName = flutterVersionName
         multiDexEnabled = true
     }
     dependencies {
@@ -63,7 +73,7 @@ android {
 
         // Add the dependencies for any other desired Firebase products
         // https://firebase.google.com/docs/android/setup#available-libraries
-        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     }
     signingConfigs {
         create("release") {
